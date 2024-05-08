@@ -483,6 +483,7 @@ END tr_USUARIOS
 --DESDE SYSTEM
 GRANT GRANT ANY ROLE TO LIFEFIT;
 GRANT CREATE USER TO LIFEFIT;
+GRANT DROP USER TO LIFEFIT
 grant connect to cliente;
 grant connect to Gerente;
 grant connect to Entrenador_dyf;

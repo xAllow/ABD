@@ -2,25 +2,30 @@ ALTER SYSTEM SET "WALLET_ROOT"='C:\app\alumnos\admin\orcl\xdb_wallet' scope=SPFI
 
 ALTER SYSTEM SET TDE_CONFIGURATION="KEYSTORE_CONFIGURATION=FILE" scope=both;
 
-//PREGUNTA 3
+--PREGUNTA 3
+--Creamos el usuario LIFEFIT y le damos permisos basicos
 CREATE USER LIFEFIT IDENTIFIED BY LIFEFIT123
     DEFAULT TABLESPACE TS_LIFEFIT
     QUOTA UNLIMITED ON TS_LIFEFIT;
 GRANT CREATE TABLE, CONNECT TO LIFEFIT;
 
-//DESDE SYSTEM CREAMOS EL TABLESPACE
+--DESDE SYSTEM CREAMOS EL TABLESPACE para indices
 CREATE TABLESPACE TS_INDICES DATAFILE 'C:\APP\ALUMNOS\ORADATA\ORCL\INDICES.DBF' SIZE 50M AUTOEXTEND ON;
 GRANT CREATE SYNONYM TO LIFEFIT;
 GRANT CREATE SEQUENCE TO LIFEFIT;
 GRANT CREATE MATERIALIZED VIEW TO LIFEFIT;
 
 
-//DESDE LIFEFIT
+--DESDE LIFEFIT
 SELECT * FROM USER_TABLES;
 DROP TABLE CLIENTE;
 COMMIT;
 
 --Desde LIFEFIT
+
+--MARK: Tablas
+--Creacion de todas las tablas necesarias , con claves primarias
+
 -- Generado por Oracle SQL Developer Data Modeler 22.2.0.165.1149
 --   en:        2024-04-10 11:15:34 CEST
 --   sitio:      Oracle Database 11g
@@ -191,7 +196,6 @@ CREATE TABLE usuario (
 
 ALTER TABLE usuario ADD CONSTRAINT usuario_pk PRIMARY KEY ( id ) USING INDEX TABLESPACE TS_INDICES;
 
--- Error - Foreign Key CITA_CLIENTE_FK has no columns
 
 ALTER TABLE cita
     ADD CONSTRAINT cita_elementocalendario_fk FOREIGN KEY ( fechayhora,
@@ -226,7 +230,6 @@ ALTER TABLE conforman
     ADD CONSTRAINT conforman_rutina_fk FOREIGN KEY ( rutina_id )
         REFERENCES rutina ( id );
 
---  ERROR: FK name length exceeds maximum allowed length(30) 
 ALTER TABLE elementocalendario
     ADD CONSTRAINT calendario_entrenador_fk FOREIGN KEY ( entrenador_id )
         REFERENCES entrenador ( id );
@@ -278,58 +281,12 @@ ALTER TABLE sesion
                           entrena_cliente_id,
                           entrena_entrenador_id );
 
---  ERROR: No Discriminator Column found in Arc FKArc_1 - constraint trigger for Arc cannot be generated 
 
---  ERROR: No Discriminator Column found in Arc FKArc_1 - constraint trigger for Arc cannot be generated 
-
---  ERROR: No Discriminator Column found in Arc FKArc_1 - constraint trigger for Arc cannot be generated
-
-
-
--- Informe de Resumen de Oracle SQL Developer Data Modeler: 
--- 
--- CREATE TABLE                            14
--- CREATE INDEX                             1
--- ALTER TABLE                             34
--- CREATE VIEW                              0
--- ALTER VIEW                               0
--- CREATE PACKAGE                           0
--- CREATE PACKAGE BODY                      0
--- CREATE PROCEDURE                         0
--- CREATE FUNCTION                          0
--- CREATE TRIGGER                           0
--- ALTER TRIGGER                            0
--- CREATE COLLECTION TYPE                   0
--- CREATE STRUCTURED TYPE                   0
--- CREATE STRUCTURED TYPE BODY              0
--- CREATE CLUSTER                           0
--- CREATE CONTEXT                           0
--- CREATE DATABASE                          0
--- CREATE DIMENSION                         0
--- CREATE DIRECTORY                         0
--- CREATE DISK GROUP                        0
--- CREATE ROLE                              0
--- CREATE ROLLBACK SEGMENT                  0
--- CREATE SEQUENCE                          0
--- CREATE MATERIALIZED VIEW                 0
--- CREATE MATERIALIZED VIEW LOG             0
--- CREATE SYNONYM                           0
--- CREATE TABLESPACE                        0
--- CREATE USER                              0
--- 
--- DROP TABLESPACE                          0
--- DROP DATABASE                            0
--- 
--- REDACTION POLICY                         0
--- 
--- ORDS DROP SCHEMA                         0
--- ORDS ENABLE SCHEMA                       0
--- ORDS ENABLE OBJECT                       0
--- 
--- ERRORS                                   8
--- WARNINGS                                 0
 
 --Desde LIFEFIT 
+--MARK: Datos
+--Rellenar con datos las tablas
+
 Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('10','Gimnasio FitLife','Calle de la Victoria, 12','29012');
 Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('20','Gimnasio SportZone','Avenida de Andalucía, 34','29006');
 Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('30','Gimnasio Vitality','Calle de la Unión, 8','29004');
@@ -403,12 +360,14 @@ Insert into LIFEFIT.EJERCICIOS_EXT (NOMBRE,DESCRIPCION,VIDEO) values ('Zancadas'
 Insert into LIFEFIT.EJERCICIOS_EXT (NOMBRE,DESCRIPCION,VIDEO) values ('Flexiones Diamante','Variante de las flexiones que enfatiza más en los tríceps. Coloca las manos juntas debajo del pecho, formando un diamante con los pulgares y los índices. Realiza las flexiones manteniendo los codos cerca del cuerpo.','https://www.youtube.com/watch?v=Jx4cT2Ny8Mg');
 Insert into LIFEFIT.EJERCICIOS_EXT (NOMBRE,DESCRIPCION,VIDEO) values ('Elevaciones Laterales','Ejercicio para fortalecer los hombros y los músculos del deltoides medio. De pie, con una mancuerna en cada mano, levanta los brazos hacia los lados hasta que estén paralelos al suelo, luego baja lentamente.','https://www.youtube.com/watch?v=yho0e_9rOwA');
 Insert into LIFEFIT.EJERCICIOS_EXT (NOMBRE,DESCRIPCION,VIDEO) values ('Plancha Lateral','Ejercicio para trabajar los músculos abdominales, oblicuos y estabilizadores del core. Acuéstate de lado apoyándote en el antebrazo y el costado del pie, mantén el cuerpo en línea recta y sostén la posición durante el tiempo deseado.','https://www.youtube.com/watch?v=zf0RBDYF8iE');
+
 --Desde system
+--Creacion de directorio externo
 create or replace directory directorio_ext as 'C:\app\alumnos\admin\orcl\dpdump';
 grant read, write on directory directorio_ext to LIFEFIT;
 
 --Desde LIFEFIT
-
+--Creacion de tabla externa
 create table ejercicios_ext
  (  nombre      VARCHAR2(100 CHAR),
     descripcion VARCHAR2(4000 CHAR),
@@ -431,6 +390,7 @@ ORGANIZATION EXTERNAL (
 
 SELECT * FROM EJERCICIOS_EXT;
 
+--Creamos indices y uno bitmap
 
 CREATE INDEX NOMBRE_IDX ON USUARIO(NOMBRE) TABLESPACE TS_INDICES;
 CREATE INDEX UPPERAPELLIDOS_IDX ON USUARIO(UPPER(APELLIDOS)) TABLESPACE TS_INDICES;
@@ -441,6 +401,7 @@ SELECT index_name, index_type
 FROM user_indexes
 WHERE table_name = 'CLIENTE';
 
+--Crear vista materealizada VM_EJERCICIOS y su sinonimo
 
 CREATE MATERIALIZED VIEW VM_EJERCICIOS
 REFRESH FORCE START WITH SYSDATE NEXT SYSDATE + 1
@@ -448,6 +409,7 @@ AS SELECT * FROM ejercicios_ext;
 
 CREATE SYNONYM S_EJERCICIOS FOR VM_EJERCICIOS;
 
+--El disparador para el id al insertar en EJERCICIO
 
 CREATE SEQUENCE SEQ_EJERCICIOS;
 
@@ -464,8 +426,9 @@ insert into ejercicio(nombre,descripcion,video) SELECT s_ejercicios.nombre,s_eje
 
 
 --SEGUNDA PARTE
-
+--MARK: Permisos
 --Desde system
+--Creacion de los roles y permiso para lifefit
 
 CREATE ROLE Administrador;
 CREATE ROLE Gerente;
@@ -476,6 +439,7 @@ GRANT DBA to Administrador;
 GRANT Administrador to LIFEFIT;
 
 --DESDE LIFEFIT
+--Los permisos para el resto de roles
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON CENTRO TO GERENTE;
 GRANT SELECT,INSERT,DELETE,UPDATE ON ENTRENADOR TO GERENTE;

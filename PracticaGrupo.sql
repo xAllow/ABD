@@ -329,7 +329,80 @@ ALTER TABLE sesion
 -- ERRORS                                   8
 -- WARNINGS                                 0
 
+--Desde LIFEFIT 
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('10','Gimnasio FitLife','Calle de la Victoria, 12','29012');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('20','Gimnasio SportZone','Avenida de Andalucía, 34','29006');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('30','Gimnasio Vitality','Calle de la Unión, 8','29004');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('40','Gimnasio BodyFit','Calle de la Paz, 21','29002');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('50','Gimnasio PowerFlex','Avenida de la Constitución, 45','29008');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('60','Gimnasio ActiveLife','Calle de la Alcazabilla, 17','29015');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('70','Gimnasio IronStrong','Calle de la Trinidad, 5','29001');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('80','Gimnasio FitZone','Avenida de la Malagueta, 28','29016');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('90','Gimnasio Wellness','Calle de la Merced, 10','29013');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('100','Gimnasio FlexFit','Avenida de la Aurora, 9','29005');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('110','Gimnasio BodyTech','Calle de la Alameda, 22','29014');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('120','Gimnasio EliteFitness','Avenida de la Rosaleda, 7','29010');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('130','Gimnasio ActiveZone','Calle de la Victoria, 18','29011');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('140','Gimnasio PowerGym','Avenida de la Malagueta, 12','29017');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('150','Gimnasio FitFlex','Calle de la Unión, 14','29003');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('160','Gimnasio SportLife','Avenida de Andalucía, 22','29007');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('170','Gimnasio VitalFit','Calle de la Paz, 31','29001');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('180','Gimnasio BodyZone','Avenida de la Constitución, 50','29009');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('190','Gimnasio IronFit','Calle de la Alcazabilla, 21','29016');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('200','Gimnasio FitStrong','Calle de la Trinidad, 8','29002');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('210','Gimnasio ActiveFit','Avenida de la Malagueta, 32','29018');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('220','Gimnasio WellnessZone','Calle de la Merced, 15','29014');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('230','Gimnasio FlexLife','Avenida de la Aurora, 12','29006');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('240','Gimnasio BodyFlex','Calle de la Alameda, 25','29015');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('250','Gimnasio EliteFit','Avenida de la Rosaleda, 10','29011');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('260','Gimnasio ActiveGym','Calle de la Victoria, 20','29010');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('270','Gimnasio PowerLife','Avenida de la Malagueta, 15','29017');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('280','Gimnasio FitTech','Calle de la Unión, 10','29003');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('290','Gimnasio SportFlex','Avenida de Andalucía, 28','29008');
+Insert into LIFEFIT.CENTRO (ID,NOMBRE,DIRECCION,CPOSTAL) values ('300','Gimnasio VitalFlex','Calle de la Paz, 28','29001');
 
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('31','alvaro','luque torres','584858458',null,null,'usuariooracle31');
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('1','Ana','García Pérez','678123456','Calle del Sol, 5','ana.garcia@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('2','José','López Martínez','612987654','Avenida de la Luna, 12','jose.lopez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('3','María','Rodríguez Sánchez','655234567','Calle de la Playa, 8','maria.rodriguez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('4','David','Fernández González','633345678','Avenida del Mar, 20','david.fernandez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('5','Laura','Martín Romero','644456789','Calle de la Montaña, 15','laura.martin@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('6','Carlos','Pérez García','600567890','Avenida del Bosque, 30','carlos.perez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('7','Sofía','González López','677678901','Calle del Río, 25','sofia.gonzalez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('8','Pablo','Romero Martínez','688789012','Avenida de la Ciudad, 18','pablo.romero@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('9','Isabel','Sánchez Rodríguez','655890123','Calle de la Estrella, 10','isabel.sanchez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('10','Adrián','López Fernández','633901234','Avenida del Parque, 22','adrian.lopez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('11','Andrea','Rodríguez García','644012345','Calle del Paseo, 14','andrea.rodriguez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('12','Javier','Fernández Pérez','600123456','Avenida de la Plaza, 28','javier.fernandez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('13','Paula','Martín Sánchez','677234567','Calle de la Fuente, 7','paula.martin@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('14','Alejandro','Pérez Romero','688345678','Avenida del Jardín, 9','alejandro.perez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('15','Elena','González Martínez','655456789','Calle de la Cuesta, 11','elena.gonzalez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('16','Miguel','Romero López','633567890','Avenida de la Colina, 5','miguel.romero@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('17','Valeria','Sánchez García','644678901','Calle del Bosque, 12','valeria.sanchez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('18','Daniel','López Sánchez','600789012','Avenida del Mar, 17','daniel.lopez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('19','Alba','Rodríguez Pérez','677890123','Calle de la Luna, 20','alba.rodriguez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('20','Iván','Fernández Martínez','688901234','Avenida de la Playa, 14','ivan.fernandez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('21','Carmen','Martín García','655012345','Calle de la Montaña, 9','carmen.martin@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('22','Rubén','Pérez Romero','633123456','Avenida del Río, 22','ruben.perez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('23','Sara','González Sánchez','644234567','Calle de la Ciudad, 16','sara.gonzalez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('24','Aitor','Romero López','600345678','Avenida de la Estrella, 8','aitor.romero@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('25','Natalia','López García','677456789','Calle del Parque, 11','natalia.lopez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('26','Hugo','Rodríguez Martínez','688567890','Avenida del Paseo, 19','hugo.rodriguez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('27','Olivia','Fernández Pérez','655678901','Calle de la Plaza, 27','olivia.fernandez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('28','Diego','Martín Sánchez','633789012','Avenida de la Fuente, 6','diego.martin@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('29','Valentina','Pérez Romero','644890123','Calle del Jardín, 8','valentina.perez@email.com',null);
+Insert into LIFEFIT.USUARIO (ID,NOMBRE,APELLIDOS,TELEFONO,DIRECCION,CORREOE,USUARIOORACLE) values ('30','Álvaro','González Martínez','600901234','Avenida de la Cuesta, 10','alvaro.gonzalez@email.com',null);
+
+Insert into LIFEFIT.EJERCICIOS_EXT (NOMBRE,DESCRIPCION,VIDEO) values ('Sentadillas','Ejercicio básico para fortalecer las piernas. Párate con los pies separados al ancho de los hombros y baja el cuerpo doblando las rodillas, manteniendo la espalda recta. Luego, vuelve a la posición inicial.','https://www.youtube.com/watch?v=QKKZ9AGYTi4');
+Insert into LIFEFIT.EJERCICIOS_EXT (NOMBRE,DESCRIPCION,VIDEO) values ('Flexiones de Brazos','Ejercicio para fortalecer los músculos del pecho, hombros y tríceps. Apóyate en el suelo con las manos a la altura de los hombros, manteniendo el cuerpo recto y descendiendo hasta que los codos estén en un ángulo de 90 grados','https://www.youtube.com/watch?v=UwRLWMcOdwI');
+Insert into LIFEFIT.EJERCICIOS_EXT (NOMBRE,DESCRIPCION,VIDEO) values ('Plancha Abdominal','Ejercicio de isometría para fortalecer el core. Colócate en posición de plancha, apoyando el peso en los antebrazos y los dedos de los pies, manteniendo el cuerpo recto y los músculos abdominales contraídos.','https://www.youtube.com/watch?v=TvxNkmjdhMM');
+Insert into LIFEFIT.EJERCICIOS_EXT (NOMBRE,DESCRIPCION,VIDEO) values ('Levantamiento de Pesas','Ejercicio de fuerza que se puede adaptar a diferentes grupos musculares. Utiliza pesas adecuadas para tu nivel de fuerza, mantén una postura adecuada y realiza movimientos controlados para evitar lesiones.','https://www.youtube.com/watch?v=qEwKCR5JCog');
+Insert into LIFEFIT.EJERCICIOS_EXT (NOMBRE,DESCRIPCION,VIDEO) values ('Burpees','Ejercicio que combina flexiones, saltos y sentadillas. Comienza en posición de cuclillas, luego apoya las manos en el suelo, estira las piernas hacia atrás realizando una flexión, lleva las piernas de vuelta a la posición de cuclillas y salta','https://www.youtube.com/watch?v=JZQA08SlJnM');
+Insert into LIFEFIT.EJERCICIOS_EXT (NOMBRE,DESCRIPCION,VIDEO) values ('Dominadas','Ejercicio para fortalecer la espalda y los brazos. Agárrate a una barra con las manos separadas al ancho de los hombros y levántate hasta que la barbilla esté por encima de la barra. Luego, baja lentamente hasta la posición inicial.','https://www.youtube.com/watch?v=eGo4IYlbE5g');
+Insert into LIFEFIT.EJERCICIOS_EXT (NOMBRE,DESCRIPCION,VIDEO) values ('Zancadas','Ejercicio para fortalecer las piernas y glúteos. Da un paso adelante con una pierna y flexiona ambas rodillas hasta que las piernas formen ángulos de 90 grados. Luego, vuelve a la posición inicial y repite con la otra pierna.','https://www.youtube.com/watch?v=QOVaHwm-Q6U');
+Insert into LIFEFIT.EJERCICIOS_EXT (NOMBRE,DESCRIPCION,VIDEO) values ('Flexiones Diamante','Variante de las flexiones que enfatiza más en los tríceps. Coloca las manos juntas debajo del pecho, formando un diamante con los pulgares y los índices. Realiza las flexiones manteniendo los codos cerca del cuerpo.','https://www.youtube.com/watch?v=Jx4cT2Ny8Mg');
+Insert into LIFEFIT.EJERCICIOS_EXT (NOMBRE,DESCRIPCION,VIDEO) values ('Elevaciones Laterales','Ejercicio para fortalecer los hombros y los músculos del deltoides medio. De pie, con una mancuerna en cada mano, levanta los brazos hacia los lados hasta que estén paralelos al suelo, luego baja lentamente.','https://www.youtube.com/watch?v=yho0e_9rOwA');
+Insert into LIFEFIT.EJERCICIOS_EXT (NOMBRE,DESCRIPCION,VIDEO) values ('Plancha Lateral','Ejercicio para trabajar los músculos abdominales, oblicuos y estabilizadores del core. Acuéstate de lado apoyándote en el antebrazo y el costado del pie, mantén el cuerpo en línea recta y sostén la posición durante el tiempo deseado.','https://www.youtube.com/watch?v=zf0RBDYF8iE');
 --Desde system
 create or replace directory directorio_ext as 'C:\app\alumnos\admin\orcl\dpdump';
 grant read, write on directory directorio_ext to LIFEFIT;

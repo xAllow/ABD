@@ -361,6 +361,38 @@ Insert into LIFEFIT.EJERCICIOS_EXT (NOMBRE,DESCRIPCION,VIDEO) values ('Flexiones
 Insert into LIFEFIT.EJERCICIOS_EXT (NOMBRE,DESCRIPCION,VIDEO) values ('Elevaciones Laterales','Ejercicio para fortalecer los hombros y los músculos del deltoides medio. De pie, con una mancuerna en cada mano, levanta los brazos hacia los lados hasta que estén paralelos al suelo, luego baja lentamente.','https://www.youtube.com/watch?v=yho0e_9rOwA');
 Insert into LIFEFIT.EJERCICIOS_EXT (NOMBRE,DESCRIPCION,VIDEO) values ('Plancha Lateral','Ejercicio para trabajar los músculos abdominales, oblicuos y estabilizadores del core. Acuéstate de lado apoyándote en el antebrazo y el costado del pie, mantén el cuerpo en línea recta y sostén la posición durante el tiempo deseado.','https://www.youtube.com/watch?v=zf0RBDYF8iE');
 
+INSERT INTO centro (id, nombre, direccion, cpostal) VALUES (1, 'Centro Salud A', 'Calle 1', '28001');
+INSERT INTO centro (id, nombre, direccion, cpostal) VALUES (2, 'Centro Salud B', 'Calle 2', '28002');
+INSERT INTO centro (id, nombre, direccion, cpostal) VALUES (3, 'Centro Salud C', 'Calle 3', '28003');
+INSERT INTO cita (fechayhora, id, modalidad, cliente_id) VALUES (TO_DATE('2023-05-10 10:00', 'YYYY-MM-DD HH24:MI'), 1, 'Presencial', 1);
+INSERT INTO cita (fechayhora, id, modalidad, cliente_id) VALUES (TO_DATE('2023-05-11 11:00', 'YYYY-MM-DD HH24:MI'), 2, 'Virtual', 2);
+-- Agrega más insert hasta completar 20 registros.
+INSERT INTO cliente (id, objetivo, preferencias, dieta_id, centro_id) VALUES (2, 'Ganar músculo', 'Vegetariano', 2, 2);
+-- Agrega más insert hasta completar 20 registros.
+INSERT INTO conforman (series, repeticiones, duracion, rutina_id, ejercicio_id) VALUES ('3', '12', '45 min', 1, 1);
+INSERT INTO conforman (series, repeticiones, duracion, rutina_id, ejercicio_id) VALUES ('4', '10', '30 min', 2, 2);
+-- Agrega más insert hasta completar 20 registros.
+INSERT INTO dieta (id, nombre, descripcion, tipo) VALUES (2, 'Dieta Paleo', 'Dieta basada en alimentos no procesados', 'Paleo');
+-- Agrega más insert hasta completar 20 registros.
+INSERT INTO elementocalendario (fechayhora, entrenador_id) VALUES (TO_DATE('2023-05-10 10:00', 'YYYY-MM-DD HH24:MI'), 1);
+INSERT INTO elementocalendario (fechayhora, entrenador_id) VALUES (TO_DATE('2023-05-11 11:00', 'YYYY-MM-DD HH24:MI'), 2);
+-- Agrega más insert hasta completar 20 registros.
+INSERT INTO entrena (especialidad, entrenador_id, cliente_id) VALUES ('Cardio', 1, 1);
+INSERT INTO entrena (especialidad, entrenador_id, cliente_id) VALUES ('Fuerza', 2, 2);
+-- Agrega más insert hasta completar 20 registros.
+INSERT INTO entrenador (id, disponibilidad, centro_id) VALUES (1, 'Lunes a Viernes', 1);
+INSERT INTO entrenador (id, disponibilidad, centro_id) VALUES (2, 'Fines de semana', 2);
+-- Agrega más insert hasta completar 20 registros.
+INSERT INTO gerente (id, despacho, horario, centro_id) VALUES (1, 'Despacho 1', '09:00-17:00', 1);
+INSERT INTO gerente (id, despacho, horario, centro_id) VALUES (2, 'Despacho 2', '10:00-18:00', 2);
+-- Agrega más insert hasta completar 20 registros.
+INSERT INTO plan (inicio, fin, rutina_id, entrena_cliente_id, entrena_entrenador_id) VALUES (TO_DATE('2023-05-01', 'YYYY-MM-DD'), TO_DATE('2023-06-01', 'YYYY-MM-DD'), 1, 1, 1);
+INSERT INTO plan (inicio, fin, rutina_id, entrena_cliente_id, entrena_entrenador_id) VALUES (TO_DATE('2023-06-01', 'YYYY-MM-DD'), TO_DATE('2023-07-01', 'YYYY-MM-DD'), 2, 2, 2);
+-- Agrega más insert hasta completar 20 registros.
+INSERT INTO rutina (id, nombre, descripcion) VALUES (1, 'Rutina A', 'Rutina básica para principiantes');
+INSERT INTO rutina (id, nombre, descripcion) VALUES (2, 'Rutina B', 'Rutina intermedia');
+-- Agrega más insert hasta completar 20 registros.
+
 --Desde system
 --Creacion de directorio externo
 create or replace directory directorio_ext as 'C:\app\alumnos\admin\orcl\dpdump';
@@ -516,6 +548,91 @@ IF :new.USUARIOORACLE IS NULL THEN
         :new.USUARIOORACLE := 'usuariooracle' || :new.ID;
     END IF;
 END tr_USUARIOS
+/
+
+-- Datos para comprobar la funcionalidad de los procedures
+DECLARE
+    v_datos_cliente base.TCLIENTE;
+    v_userpass VARCHAR2(20) := 'password123';
+    v_usuario USUARIO%ROWTYPE;
+    v_cliente CLIENTE%ROWTYPE;
+BEGIN
+    -- Datos del cliente
+    v_datos_cliente.NOMBRE := 'Juan';
+    v_datos_cliente.APELLIDOS := 'Pérez';
+    v_datos_cliente.TELEFONO := '123456789';
+    v_datos_cliente.DIRECCION := 'Calle Falsa 123';
+    v_datos_cliente.CORREOE := 'juan.perez@example.com';
+    v_datos_cliente.OBJETIVOS := 'Perder peso';
+    v_datos_cliente.PREFERENCIAS := 'Vegetariano';
+    v_datos_cliente.DIETA := 1; -- Suponiendo que la dieta con ID 1 existe
+    v_datos_cliente.CENTRO := 1; -- Suponiendo que el centro con ID 1 existe
+    
+    base.CREA_CLIENTE(
+        P_DATOS => v_datos_cliente,
+        P_USERPASS => v_userpass,
+        P_USUARIO => v_usuario,
+        P_CLIENTE => v_cliente
+    );
+    
+    DBMS_OUTPUT.PUT_LINE('Cliente creado con ID: ' || v_cliente.ID);
+END;
+/
+DECLARE
+    v_datos_entrenador base.TENTRENADOR;
+    v_userpass VARCHAR2(20) := 'password456';
+    v_usuario USUARIO%ROWTYPE;
+    v_entrenador ENTRENADOR%ROWTYPE;
+BEGIN
+    -- Datos del entrenador
+    v_datos_entrenador.NOMBRE := 'Ana';
+    v_datos_entrenador.APELLIDOS := 'García';
+    v_datos_entrenador.TELEFONO := '987654321';
+    v_datos_entrenador.DIRECCION := 'Avenida Siempre Viva 742';
+    v_datos_entrenador.CORREOE := 'ana.garcia@example.com';
+    v_datos_entrenador.DISPONIBILIDAD := 'Lunes a Viernes, 9-17h';
+    v_datos_entrenador.CENTRO := 2; -- Suponiendo que el centro con ID 2 existe
+    
+    base.CREA_ENTRENADOR(
+        P_DATOS => v_datos_entrenador,
+        P_USERPASS => v_userpass,
+        P_USUARIO => v_usuario,
+        P_ENTRENADOR => v_entrenador
+    );
+    
+    DBMS_OUTPUT.PUT_LINE('Entrenador creado con ID: ' || v_entrenador.ID);
+END;
+/
+DECLARE
+    v_datos_gerente base.TGERENTE;
+    v_userpass VARCHAR2(20) := 'password789';
+    v_usuario USUARIO%ROWTYPE;
+    v_gerente GERENTE%ROWTYPE;
+BEGIN
+    -- Datos del gerente
+    v_datos_gerente.NOMBRE := 'Carlos';
+    v_datos_gerente.APELLIDOS := 'López';
+    v_datos_gerente.TELEFONO := '555444333';
+    v_datos_gerente.DIRECCION := 'Plaza Mayor 1';
+    v_datos_gerente.CORREOE := 'carlos.lopez@example.com';
+    v_datos_gerente.DESPACHO := 'Despacho 101';
+    v_datos_gerente.HORARIO := 'Lunes a Viernes, 8-18h';
+    v_datos_gerente.CENTRO := 1; -- Suponiendo que el centro con ID 1 existe
+    
+    base.CREA_GERENTE(
+        P_DATOS => v_datos_gerente,
+        P_USERPASS => v_userpass,
+        P_USUARIO => v_usuario,
+        P_GERENTE => v_gerente
+    );
+    
+    DBMS_OUTPUT.PUT_LINE('Gerente creado con ID: ' || v_gerente.ID);
+END;
+/
+
+BEGIN
+    BASE.elimina_centro(1);
+END;
 /
 --DESDE SYSTEM
 GRANT GRANT ANY ROLE TO LIFEFIT;
@@ -733,6 +850,96 @@ create or replace PACKAGE BODY BASE AS
             
             RAISE EXCEPCION_ELIMINACION;
     END ELIMINA_CLIENTE
+    --MARK: elimina gerente
+    PROCEDURE ELIMINA_GERENTE(P_ID USUARIO.ID%TYPE)AS
+    BEGIN
+        SAVEPOINT ELIMINA_GERENTE_POINT;
+        ELIMINA_USER(P_ID);
+        DELETE FROM GERENTE WHERE ID = P_ID;
+        DELETE FROM USUARIO WHERE ID = P_ID;
+    EXCEPTION
+        WHEN OTHERS THEN
+            ROLLBACK TO ELIMINA_GERENTE_POINT;
+
+            DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+            
+            RAISE EXCEPCION_ELIMINACION;
+    END ELIMINA_GERENTE;
+    --MARK: elimina entrenador
+    PROCEDURE ELIMINA_ENTRENADOR(P_ID USUARIO.ID%TYPE)AS
+    BEGIN
+        SAVEPOINT ELIMINA_ENTRENADOR_POINT;
+        DELETE FROM SESION WHERE PLAN_ENTRENA_ENTRENADOR_ID=P_ID;
+        DELETE FROM PLAN WHERE ENTRENA_ENTRENADOR_ID=P_ID;
+        DELETE FROM ENTRENA WHERE ENTRENADOR_id=P_ID;
+        DELETE FROM elementocalendario WHERE ENTRENADOR_ID =P_ID;
+        ELIMINA_USER(P_ID);
+        DELETE FROM ENTRENADOR WHERE ID = P_ID;
+        DELETE FROM USUARIO WHERE ID = P_ID;
+    EXCEPTION
+        WHEN OTHERS THEN
+            ROLLBACK TO ELIMINA_ENTRENADOR_POINT;
+
+            DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+            
+            RAISE EXCEPCION_ELIMINACION;
+    END ELIMINA_ENTRENADOR;
+    --MARK: elimina centro
+    PROCEDURE ELIMINA_CENTRO(P_ID CENTRO.ID%TYPE)AS
+    BEGIN
+        SAVEPOINT ELIMINA_CENTRO_POINT;
+        -- Eliminar clientes
+        FOR rec IN (SELECT id FROM cliente WHERE centro_id = P_ID) LOOP
+            BEGIN
+                ELIMINA_CLIENTE(rec.id);
+            EXCEPTION
+                WHEN OTHERS THEN
+                    ROLLBACK TO ELIMINA_CENTRO_POINT;
+                    
+                    DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+            
+                    RAISE EXCEPCION_ELIMINACION;
+            END;
+        END LOOP;
+    
+        -- Eliminar entrenadores
+        FOR rec IN (SELECT id FROM entrenador WHERE centro_id = P_ID) LOOP
+            BEGIN
+                ELIMINA_ENTRENADOR(rec.id);
+            EXCEPTION
+                WHEN OTHERS THEN
+                    ROLLBACK TO ELIMINA_CENTRO_POINT;
+                    
+                    DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+            
+                    RAISE EXCEPCION_ELIMINACION;
+            END;
+        END LOOP;
+    
+        -- Eliminar gerentes
+        FOR rec IN (SELECT id FROM gerente WHERE centro_id = P_ID) LOOP
+            BEGIN
+                ELIMINA_GERENTE(rec.id);
+            EXCEPTION
+                WHEN OTHERS THEN
+                    ROLLBACK TO ELIMINA_CENTRO_POINT;
+                    
+                    DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+            
+                    RAISE EXCEPCION_ELIMINACION;
+            END;
+        END LOOP;
+        -- Eliminar el centro
+        DELETE FROM centro WHERE id = P_ID;
+        COMMIT;
+    EXCEPTION
+        WHEN OTHERS THEN
+            ROLLBACK TO ELIMINA_CENTRO_POINT;
+            
+            DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+            
+            RAISE EXCEPCION_ELIMINACION;
+    END ELIMINA_CENTRO;
 END BASE;
 /
     

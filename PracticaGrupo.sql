@@ -2,14 +2,15 @@ ALTER SYSTEM SET "WALLET_ROOT"='C:\app\alumnos\admin\orcl\xdb_wallet' scope=SPFI
 
 ALTER SYSTEM SET TDE_CONFIGURATION="KEYSTORE_CONFIGURATION=FILE" scope=both;
 
---PREGUNTA 3
+--Desde system
 --Creamos el usuario LIFEFIT y le damos permisos basicos
+CREATE TABLESPACE TS_LIFEFIT DATAFILE 'C:\APP\ALUMNOS\ORADATA\ORCL\LIFEFIT.DBF' SIZE 10M AUTOEXTEND ON;
 CREATE USER LIFEFIT IDENTIFIED BY LIFEFIT123
     DEFAULT TABLESPACE TS_LIFEFIT
     QUOTA UNLIMITED ON TS_LIFEFIT;
 GRANT CREATE TABLE, CONNECT TO LIFEFIT;
 
---DESDE SYSTEM CREAMOS EL TABLESPACE para indices
+--DESDE SYSTEM CREAMOS EL TABLESPACE para indices 
 CREATE TABLESPACE TS_INDICES DATAFILE 'C:\APP\ALUMNOS\ORADATA\ORCL\INDICES.DBF' SIZE 50M AUTOEXTEND ON;
 GRANT CREATE SYNONYM TO LIFEFIT;
 GRANT CREATE SEQUENCE TO LIFEFIT;
@@ -188,9 +189,9 @@ CREATE TABLE usuario (
     id            NUMBER(5) NOT NULL,
     nombre        VARCHAR2(100 CHAR) NOT NULL,
     apellidos     VARCHAR2(100 CHAR) NOT NULL,
-    telefono      VARCHAR2(9 CHAR) NOT NULL,
-    direccion     VARCHAR2(100 CHAR),
-    correoe       VARCHAR2(100 CHAR),
+    telefono      VARCHAR2(9 CHAR) ENCRYPT NOT NULL,
+    direccion     VARCHAR2(100 CHAR) ENCRYPT,
+    correoe       VARCHAR2(100 CHAR) ENCRYPT,
     usuariooracle VARCHAR2(100 CHAR)
 );
 
@@ -426,8 +427,6 @@ SELECT * FROM EJERCICIOS_EXT;
 
 CREATE INDEX NOMBRE_IDX ON USUARIO(NOMBRE) TABLESPACE TS_INDICES;
 CREATE INDEX UPPERAPELLIDOS_IDX ON USUARIO(UPPER(APELLIDOS)) TABLESPACE TS_INDICES;
-select * from user_indexes;
-
 CREATE BITMAP INDEX CENTRO_ID_BTMP ON CLIENTE(CENTRO_ID) TABLESPACE TS_INDICES;
 SELECT index_name, index_type
 FROM user_indexes
@@ -476,6 +475,7 @@ GRANT Administrador to LIFEFIT;
 GRANT SELECT,INSERT,DELETE,UPDATE ON CENTRO TO GERENTE;
 GRANT SELECT,INSERT,DELETE,UPDATE ON ENTRENADOR TO GERENTE;
 GRANT INSERT,DELETE ON CLIENTE TO GERENTE;
+GRANT SELECT,INSERT,DELETE,UPDATE ON CONFORMAN TO ENTRENADOR_DYF;
 GRANT SELECT,INSERT,DELETE,UPDATE ON EJERCICIO TO ENTRENADOR_DYF;
 GRANT SELECT,INSERT,DELETE,UPDATE ON RUTINA TO ENTRENADOR_DYF;
 GRANT SELECT,INSERT,DELETE,UPDATE ON CITA TO ENTRENADOR_DYF;
@@ -484,18 +484,43 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON PLAN TO ENTRENADOR_DYF;
 GRANT SELECT,INSERT,DELETE,UPDATE ON SESION TO ENTRENADOR_DYF;
 GRANT SELECT,INSERT,DELETE,UPDATE ON DIETA TO ENTRENADOR_N;
 GRANT UPDATE(DIETA_ID) ON CLIENTE TO ENTRENADOR_N;
+GRANT SELECT,INSERT,DELETE,UPDATE ON ENTRENA TO GERENTE;
 GRANT UPDATE(OBJETIVO) ON CLIENTE TO CLIENTE;
 GRANT UPDATE(DATOS_SALUD) ON SESION TO CLIENTE;
 GRANT UPDATE(VIDEO) ON SESION TO CLIENTE;
 GRANT UPDATE(DESCRIPCION) ON SESION TO CLIENTE;
 ALTER TABLE EJERCICIO ADD (PUBLICO VARCHAR2(1) DEFAULT 'S');
 CREATE VIEW VEJERCICIO AS SELECT * FROM EJERCICIO WHERE PUBLICO='S';
-GRANT SELECT,INSERT,DELETE,UPDATE ON CONFORMAN TO ENTRENADOR_DYF;
-GRANT SELECT,INSERT,DELETE,UPDATE ON ENTRENA TO GERENTE;
+
+
 --RF5
 CREATE OR REPLACE VIEW CONTROL_SESIONES_CLIENTE AS 
 (SELECT INICIO, FIN, PRESENCIAL, DESCRIPCION, VIDEO, DATOS_SALUD FROM SESION JOIN USUARIO ON ID = plan_entrena_cliente_id WHERE usuariooracle = USER);
 GRANT SELECT ON CONTROL_SESIONES_CLIENTE TO CLIENTE;
+
+--MARK: VPD
+CREATE OR REPLACE FUNCTION vpd_function(p_schema VARCHAR2, p_obj VARCHAR2)
+  RETURN VARCHAR2
+AS
+  v_role VARCHAR2(10);
+BEGIN
+  v_role := SYS_CONTEXT('SYS_SESSION_ROLES', 'ADMINISTRADOR');
+  IF v_role = 'TRUE' THEN
+    RETURN '1=1'; 
+  ELSE
+    RETURN 'UPPER(usuariooracle) = SYS_CONTEXT(''USERENV'', ''SESSION_USER'')';
+  END IF;
+END;
+/
+
+begin dbms_rls.add_policy (object_schema =>'LIFEFIT',
+object_name =>'USUARIO',
+policy_name =>'datos_personales',
+function_schema =>'LIFEFIT',
+policy_function => 'vpd_function',
+statement_types => 'SELECT' ); 
+end;
+/
 
 SET SERVEROUTPUT ON;
 DECLARE
@@ -944,3 +969,146 @@ END BASE;
 /
     
 
+--MARK: PAQUETE ICALC
+create or replace PACKAGE ICALC AS
+    EXCEPCION_CREACION EXCEPTION;
+    PROCEDURE CREA_ELEMENTOS(
+        P_ID IN ENTRENADOR.ID%TYPE,
+        P_ANNO IN NUMBER,
+        P_MES IN NUMBER
+    );
+END ICALC;
+
+create or replace PACKAGE BODY ICALC AS
+    PROCEDURE CREA_ELEMENTOS(
+        P_ID IN ENTRENADOR.ID%TYPE,
+        P_ANNO IN NUMBER,
+        P_MES IN NUMBER
+    )
+    IS
+        v_disponibilidad VARCHAR2(4000);
+        v_regla VARCHAR2(4000);
+        v_dias VARCHAR2(50);
+        v_horas VARCHAR2(50);
+        v_minutos VARCHAR2(50);
+        v_fecha DATE;
+        v_dia VARCHAR2(2);
+        v_hora VARCHAR2(2);
+        v_minuto VARCHAR2(2);
+        v_elemento_fecha DATE;
+        v_fecha_inicio DATE;
+        V_DIA_SEMANA VARCHAR2(3);
+        v_pos NUMBER;
+        v_substr VARCHAR2(4000);
+
+    BEGIN
+        SAVEPOINT CREA_ELEMENTOS_POINT;
+        SELECT disponibilidad INTO v_disponibilidad
+        FROM ENTRENADOR
+        WHERE id = P_ID;
+
+        DBMS_OUTPUT.PUT_LINE('Disponibilidad del entrenador: ' || v_disponibilidad);
+
+        v_pos := 1;
+        WHILE v_pos > 0 LOOP
+            v_pos := INSTR(v_disponibilidad, '|', 1, 1);
+            IF v_pos > 0 THEN
+                v_regla := SUBSTR(v_disponibilidad, 1, v_pos - 1);
+                v_disponibilidad := SUBSTR(v_disponibilidad, v_pos + 1);
+            ELSE
+                v_regla := v_disponibilidad;
+            END IF;
+
+            DBMS_OUTPUT.PUT_LINE('Procesando regla: ' || v_regla);
+
+            -- Parsear la regla
+            v_dias := REGEXP_SUBSTR(v_regla, 'BYDAY=([^;]+)', 1, 1, NULL, 1);
+            v_horas := REGEXP_SUBSTR(v_regla, 'BYHOUR=([^;]+)', 1, 1, NULL, 1);
+            v_minutos := REGEXP_SUBSTR(v_regla, 'BYMINUTE=([^;]+)', 1, 1, NULL, 1);
+            v_fecha_inicio := TO_DATE(P_ANNO || '-' || P_MES || '-01', 'YYYY-MM-DD');
+
+            DBMS_OUTPUT.PUT_LINE('Días: ' || v_dias);
+            DBMS_OUTPUT.PUT_LINE('Horas: ' || v_horas);
+            DBMS_OUTPUT.PUT_LINE('Minutos: ' || v_minutos);
+            DBMS_OUTPUT.PUT_LINE('Fecha inicio: ' || v_fecha_inicio);
+
+            -- Generar los elementos de calendario
+            FOR dia IN (SELECT REGEXP_SUBSTR(v_dias, '[A-Z][A-Z]', 1, LEVEL) AS dia
+                        FROM dual
+                        CONNECT BY REGEXP_SUBSTR(v_dias, '[A-Z][A-Z]', 1, LEVEL) IS NOT NULL) LOOP
+
+                V_DIA_SEMANA := CASE dia.dia
+                    WHEN 'MO' THEN 'MON'
+                    WHEN 'TU' THEN 'TUE'
+                    WHEN 'WE' THEN 'WED'
+                    WHEN 'TH' THEN 'THU'
+                    WHEN 'FR' THEN 'FRI'
+                    WHEN 'SA' THEN 'SAT'
+                    WHEN 'SU' THEN 'SUN'
+                    ELSE NULL
+                END;
+
+                IF V_DIA_SEMANA IS NOT NULL THEN
+                    -- Iterar por los días del mes y encontrar los días de la semana especificados
+                    FOR d IN 1..LAST_DAY(v_fecha_inicio) - v_fecha_inicio + 1 LOOP
+                        v_fecha := v_fecha_inicio + d - 1;
+                        IF TO_CHAR(v_fecha, 'DY', 'NLS_DATE_LANGUAGE=ENGLISH') = V_DIA_SEMANA THEN
+                            FOR hora IN (SELECT REGEXP_SUBSTR(v_horas, '[^,]+', 1, LEVEL) AS hora
+                                         FROM dual
+                                         CONNECT BY REGEXP_SUBSTR(v_horas, '[^,]+', 1, LEVEL) IS NOT NULL) LOOP
+                                FOR minuto IN (SELECT REGEXP_SUBSTR(v_minutos, '[^,]+', 1, LEVEL) AS minuto
+                                               FROM dual
+                                               CONNECT BY REGEXP_SUBSTR(v_minutos, '[^,]+', 1, LEVEL) IS NOT NULL) LOOP
+                                    -- Crear el elemento de calendario
+                                    BEGIN
+                                        v_elemento_fecha := TO_DATE(P_ANNO || '-' || P_MES || '-' || TO_CHAR(v_fecha, 'DD') || ' ' || LPAD(hora.hora, 2, '0') || ':' || LPAD(minuto.minuto, 2, '0'), 'YYYY-MM-DD HH24:MI');
+
+                                        DBMS_OUTPUT.PUT_LINE('Fecha elemento: ' || v_elemento_fecha);
+
+                                        INSERT INTO ELEMENTOCALENDARIO(fechayhora, entrenador_id)
+                                        VALUES (v_elemento_fecha, P_ID);
+                                    EXCEPTION
+                                        WHEN DUP_VAL_ON_INDEX THEN
+                                            DBMS_OUTPUT.PUT_LINE('Elemento duplicado ignorado: ' || TO_CHAR(v_elemento_fecha, 'YYYY-MM-DD HH24:MI'));
+                                        WHEN OTHERS THEN
+                                            DBMS_OUTPUT.PUT_LINE('Error al crear elemento para fecha: ' || TO_CHAR(v_elemento_fecha, 'YYYY-MM-DD HH24:MI'));
+                                            RAISE EXCEPCION_CREACION;
+                                    END;
+                                END LOOP;
+                            END LOOP;
+                        END IF;
+                    END LOOP;
+                END IF;
+            END LOOP;
+        END LOOP;
+
+        COMMIT;
+    EXCEPTION
+        WHEN EXCEPCION_CREACION THEN
+            ROLLBACK TO CREA_ELEMENTOS_POINT;
+            DBMS_OUTPUT.PUT_LINE('Error al crear elementos de calendario.');
+        WHEN OTHERS THEN
+            ROLLBACK TO CREA_ELEMENTOS_POINT;
+            DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+            RAISE;
+    END CREA_ELEMENTOS;
+END ICALC;
+
+--MARK: JOB
+BEGIN
+  DBMS_SCHEDULER.CREATE_JOB (
+    job_name          => 'CREAR_EVENTOS_ENTRENADORES',
+    job_type          => 'PLSQL_BLOCK',
+    job_action        => '
+      BEGIN
+        FOR entren IN (SELECT id FROM ENTRENADOR) LOOP
+          ICALC.crea_elementos(entren.id, EXTRACT(YEAR FROM SYSDATE), EXTRACT(MONTH FROM SYSDATE) + 1);
+        END LOOP;
+      END;',
+    start_date        => sysdate + 1,
+    repeat_interval   => 'FREQ=MONTHLY; BYMONTHDAY=20; BYHOUR=1;', 
+    enabled           => TRUE,
+    comments          => 'Job para crear eventos de calendario para todos los entrenadores'
+  );
+END;
+/

@@ -148,7 +148,8 @@ CREATE TABLE plan (
     fin                          DATE,
     rutina_id                    NUMBER(5) NOT NULL,
     entrena_cliente_id           NUMBER(5) NOT NULL,
-    entrena_entrenador_id        NUMBER(5) NOT NULL
+    entrena_entrenador_id        NUMBER(5) NOT NULL,
+    CHECK(inicio<fin)
 );
 
 ALTER TABLE plan
@@ -175,7 +176,8 @@ CREATE TABLE sesion (
     plan_inicio                DATE NOT NULL,
     plan_rutina_id             NUMBER(5) NOT NULL,
     plan_entrena_cliente_id    NUMBER(5) NOT NULL,
-    plan_entrena_entrenador_id NUMBER(5) NOT NULL
+    plan_entrena_entrenador_id NUMBER(5) NOT NULL,
+    CHECK(inicio<fin)
 );
 
 ALTER TABLE sesion
@@ -1232,3 +1234,19 @@ BEGIN
   );
 END;
 /
+
+
+--MARK: POLITICA CONTRASEÑA
+CREATE PASSWORD POLICY POLITICA_CONTRASENA
+    PASSWORD_MIN_LENGTH = 12
+    PASSWORD_MAX_LENGTH = 24
+    PASSWORD_MIN_UPPER_CASE_CHARS = 2
+    PASSWORD_MIN_LOWER_CASE_CHARS = 2
+    PASSWORD_MIN_NUMERIC_CHARS = 2
+    PASSWORD_MIN_SPECIAL_CHARS = 2
+    PASSWORD_MIN_AGE_DAYS = 1
+    PASSWORD_MAX_AGE_DAYS = 30
+    PASSWORD_MAX_RETRIES = 3
+    PASSWORD_LOCKOUT_TIME_MINS = 30
+    PASSWORD_HISTORY = 5
+    COMMENT = 'Esta es la politica de contrasena';

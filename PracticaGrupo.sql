@@ -347,32 +347,32 @@ INSERT INTO centro (id, nombre, direccion, cpostal) VALUES (2, 'Centro Salud B',
 INSERT INTO centro (id, nombre, direccion, cpostal) VALUES (3, 'Centro Salud C', 'Calle 3', '28003');
 INSERT INTO cita (fechayhora, id, modalidad, cliente_id) VALUES (TO_DATE('2023-05-10 10:00', 'YYYY-MM-DD HH24:MI'), 1, 'Presencial', 1);
 INSERT INTO cita (fechayhora, id, modalidad, cliente_id) VALUES (TO_DATE('2023-05-11 11:00', 'YYYY-MM-DD HH24:MI'), 2, 'Virtual', 2);
--- Agrega más insert hasta completar 20 registros.
+
 INSERT INTO cliente (id, objetivo, preferencias, dieta_id, centro_id) VALUES (2, 'Ganar músculo', 'Vegetariano', 2, 2);
--- Agrega más insert hasta completar 20 registros.
+
 INSERT INTO conforman (series, repeticiones, duracion, rutina_id, ejercicio_id) VALUES ('3', '12', '45 min', 1, 1);
 INSERT INTO conforman (series, repeticiones, duracion, rutina_id, ejercicio_id) VALUES ('4', '10', '30 min', 2, 2);
--- Agrega más insert hasta completar 20 registros.
+
 INSERT INTO dieta (id, nombre, descripcion, tipo) VALUES (2, 'Dieta Paleo', 'Dieta basada en alimentos no procesados', 'Paleo');
--- Agrega más insert hasta completar 20 registros.
+
 INSERT INTO elementocalendario (fechayhora, entrenador_id) VALUES (TO_DATE('2023-05-10 10:00', 'YYYY-MM-DD HH24:MI'), 1);
 INSERT INTO elementocalendario (fechayhora, entrenador_id) VALUES (TO_DATE('2023-05-11 11:00', 'YYYY-MM-DD HH24:MI'), 2);
--- Agrega más insert hasta completar 20 registros.
+
 INSERT INTO entrena (especialidad, entrenador_id, cliente_id) VALUES ('Cardio', 1, 1);
 INSERT INTO entrena (especialidad, entrenador_id, cliente_id) VALUES ('Fuerza', 2, 2);
--- Agrega más insert hasta completar 20 registros.
+
 INSERT INTO entrenador (id, disponibilidad, centro_id) VALUES (1, 'Lunes a Viernes', 1);
 INSERT INTO entrenador (id, disponibilidad, centro_id) VALUES (2, 'Fines de semana', 2);
--- Agrega más insert hasta completar 20 registros.
+
 INSERT INTO gerente (id, despacho, horario, centro_id) VALUES (1, 'Despacho 1', '09:00-17:00', 1);
 INSERT INTO gerente (id, despacho, horario, centro_id) VALUES (2, 'Despacho 2', '10:00-18:00', 2);
--- Agrega más insert hasta completar 20 registros.
+
 INSERT INTO plan (inicio, fin, rutina_id, entrena_cliente_id, entrena_entrenador_id) VALUES (TO_DATE('2023-05-01', 'YYYY-MM-DD'), TO_DATE('2023-06-01', 'YYYY-MM-DD'), 1, 1, 1);
 INSERT INTO plan (inicio, fin, rutina_id, entrena_cliente_id, entrena_entrenador_id) VALUES (TO_DATE('2023-06-01', 'YYYY-MM-DD'), TO_DATE('2023-07-01', 'YYYY-MM-DD'), 2, 2, 2);
--- Agrega más insert hasta completar 20 registros.
+
 INSERT INTO rutina (id, nombre, descripcion) VALUES (1, 'Rutina A', 'Rutina básica para principiantes');
 INSERT INTO rutina (id, nombre, descripcion) VALUES (2, 'Rutina B', 'Rutina intermedia');
--- Agrega más insert hasta completar 20 registros.
+
 
 --Desde system
 --Creacion de directorio externo

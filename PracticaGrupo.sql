@@ -16,7 +16,6 @@ GRANT CREATE SYNONYM TO LIFEFIT;
 GRANT CREATE SEQUENCE TO LIFEFIT;
 GRANT CREATE MATERIALIZED VIEW TO LIFEFIT;
 
-
 --DESDE LIFEFIT
 SELECT * FROM USER_TABLES;
 DROP TABLE CLIENTE;
@@ -25,18 +24,6 @@ COMMIT;
 --Desde LIFEFIT
 
 --MARK: Tablas
---Creacion de todas las tablas necesarias , con claves primarias
-
--- Generado por Oracle SQL Developer Data Modeler 22.2.0.165.1149
---   en:        2024-04-10 11:15:34 CEST
---   sitio:      Oracle Database 11g
---   tipo:      Oracle Database 11g
-
-
-
--- predefined type, no DDL - MDSYS.SDO_GEOMETRY
-
--- predefined type, no DDL - XMLTYPE
 
 CREATE TABLE centro (
     id        NUMBER(5) NOT NULL,
@@ -127,8 +114,6 @@ CREATE TABLE entrenador (
 
 ALTER TABLE entrenador ADD CONSTRAINT entrenador_pk PRIMARY KEY ( id ) USING INDEX TABLESPACE TS_INDICES;
 
-
-
 CREATE TABLE gerente (
     id        NUMBER(5) NOT NULL,
     despacho  VARCHAR2(100 CHAR),
@@ -199,7 +184,6 @@ CREATE TABLE usuario (
 
 ALTER TABLE usuario ADD CONSTRAINT usuario_pk PRIMARY KEY ( id ) USING INDEX TABLESPACE TS_INDICES;
 
-
 ALTER TABLE cita
     ADD CONSTRAINT cita_elementocalendario_fk FOREIGN KEY ( fechayhora,
                                                             id )
@@ -214,8 +198,6 @@ ALTER TABLE cita
 ALTER TABLE cliente
     ADD CONSTRAINT cliente_centro_fk FOREIGN KEY ( centro_id )
         REFERENCES centro ( id );
-
-
 
 ALTER TABLE cliente
     ADD CONSTRAINT cliente_dieta_fk FOREIGN KEY ( dieta_id )
@@ -272,8 +254,6 @@ ALTER TABLE plan
     ADD CONSTRAINT plan_rutina_fk FOREIGN KEY ( rutina_id )
         REFERENCES rutina ( id );
 
-
-
 ALTER TABLE sesion
     ADD CONSTRAINT sesion_plan_fk FOREIGN KEY ( plan_inicio,
                                                 plan_rutina_id,
@@ -283,8 +263,6 @@ ALTER TABLE sesion
                           rutina_id,
                           entrena_cliente_id,
                           entrena_entrenador_id );
-
-
 
 --Desde LIFEFIT 
 --MARK: Datos
@@ -457,7 +435,6 @@ END tr_EJERCICIOS;
 
 insert into ejercicio(nombre,descripcion,video) SELECT s_ejercicios.nombre,s_ejercicios.descripcion,s_ejercicios.video FROM S_EJERCICIOS;
 
-
 --SEGUNDA PARTE
 --MARK: Permisos
 --Desde system
@@ -557,7 +534,6 @@ JOIN USUARIO U ON E.ID = U.ID
 WHERE UPPER(usuariooracle) = USER;
 GRANT SELECT,INSERT,DELETE,UPDATE ON PLAN_PARA_ENTRENADOR_DYF TO ENTRENADOR_DYF;
 
-
 --GRANT SELECT,INSERT,DELETE,UPDATE ON SESION TO ENTRENADOR_DYF;
 CREATE OR REPLACE VIEW SESION_PARA_ENTRENADOR_DYF AS 
 SELECT S.*
@@ -581,8 +557,6 @@ GRANT UPDATE(DIETA_ID) ON CLIENTE TO ENTRENADOR_N;
 --MARK: VEJERCICIO
 ALTER TABLE EJERCICIO ADD (PUBLICO VARCHAR2(1) DEFAULT 'S');
 CREATE VIEW VEJERCICIO AS SELECT * FROM EJERCICIO WHERE PUBLICO='S';
-
-
 
 
 
@@ -618,7 +592,43 @@ JOIN USUARIO U ON U.ID = P.ENTRENADOR_ID
 WHERE UPPER(usuariooracle) = USER;
 GRANT SELECT ON ESTADO TO ENTRENADOR_DYF;
 
+--MARK:RF7
+CREATE TABLE GESTION_CITA 
+   (CLIENTE_ID NUMBER NOT NULL, 
+	ENTRENADOR_ID NUMBER NOT NULL, 
+	CITA_ID NUMBER NOT NULL, 
+	HORA DATE not null, 
+	ACCION VARCHAR2(10 BYTE) NOT NULL,
+    CHECK (ACCION IN ('CONFIRMAR', 'ANULAR', 'CAMBIAR')));
+ALTER TABLE GESTION_CITA ADD CONSTRAINT GESTION_CITA_PK PRIMARY KEY (CLIENTE_ID, ENTRENADOR_ID, CITA_ID, hora);
 
+ALTER TABLE GESTION_CITA
+    ADD CONSTRAINT GESTION_CITA_ELEMENTOCALENDARIO_FK FOREIGN KEY ( ENTRENADOR_ID , hora)
+        REFERENCES ELEMENTOCALENDARIO ( ENTRENADOR_ID, fechayhora );
+
+  
+ALTER TABLE GESTION_CITA
+    ADD CONSTRAINT GESTION_CITA_CITA_FK FOREIGN KEY ( CLIENTE_ID, HORA, CITA_ID )
+        REFERENCES CITA ( CLIENTE_ID, FECHAYHORA, ID);
+
+
+  GRANT INSERT ON GESTION_CITA TO CLIENTE;
+  GRANT DELETE ON GESTION_CITA TO ENTRENADOR_DYF;
+  GRANT INSERT ON GESTION_CITA TO ENTRENADOR_DYF;
+  GRANT UPDATE ON GESTION_CITA TO ENTRENADOR_DYF;
+  GRANT DELETE ON GESTION_CITA TO ENTRENADOR_N;
+  GRANT INSERT ON GESTION_CITA TO ENTRENADOR_N;
+  GRANT UPDATE ON GESTION_CITA TO ENTRENADOR_N;
+
+CREATE OR REPLACE VIEW CITA_PENDIENTES_ENTRENADOR_DYF AS 
+SELECT CI.*
+FROM GESTION_CITA CI
+JOIN ELEMENTOCALENDARIO EL ON EL.fechayhora = CI.HORA 
+JOIN ENTRENADOR E ON E.ID = EL.entrenador_id
+JOIN USUARIO U ON E.ID = U.ID
+WHERE UPPER(usuariooracle) = USER;
+GRANT SELECT,INSERT,DELETE,UPDATE ON CITA_PENDIENTES_ENTRENADOR_DYF TO ENTRENADOR_DYF, ENTRENADOR_N;
+  
 --MARK: VPD
 CREATE OR REPLACE FUNCTION vpd_function(p_schema VARCHAR2, p_obj VARCHAR2)
   RETURN VARCHAR2
@@ -644,41 +654,33 @@ end;
 
 SET SERVEROUTPUT ON;
 DECLARE
-    -- Declara una variable para almacenar los datos del cliente
     v_datos_cliente base.TCLIENTE;
-
-    -- Declara variables para almacenar los datos del usuario y cliente creados
     v_usuario USUARIO%ROWTYPE;
     v_cliente CLIENTE%ROWTYPE;
 BEGIN
-    -- Inicializa los datos del cliente
+    
     v_datos_cliente.NOMBRE := 'John';
     v_datos_cliente.APELLIDOS := 'Doe';
     v_datos_cliente.TELEFONO := '123456789';
     v_datos_cliente.DIRECCION := '123 Main Street';
     v_datos_cliente.CORREOE := 'john@example.com';
     v_datos_cliente.OBJETIVOS := 'Perder peso';
-    v_datos_cliente.DIETA := 1; -- Este valor deberÃ­a ser ajustado segÃºn la lÃ³gica de tu aplicaciÃ³n
+    v_datos_cliente.DIETA := 1; 
     v_datos_cliente.PREFERENCIAS := 'Cardio';
     v_datos_cliente.CENTRO := 10;
 
-    -- Llama al procedimiento CREA_CLIENTE para crear el cliente
     base.CREA_CLIENTE(v_datos_cliente, 'password123', v_usuario, v_cliente);
 
-    -- Imprime los datos del usuario y cliente creados
     DBMS_OUTPUT.PUT_LINE('Usuario creado:');
     DBMS_OUTPUT.PUT_LINE('ID: ' || v_usuario.ID);
     DBMS_OUTPUT.PUT_LINE('NOMBRE: ' || v_usuario.NOMBRE);
     DBMS_OUTPUT.PUT_LINE('APELLIDOS: ' || v_usuario.APELLIDOS);
-    -- Imprime los demÃ¡s campos del usuario si es necesario
-
     DBMS_OUTPUT.PUT_LINE('Cliente creado:');
     DBMS_OUTPUT.PUT_LINE('ID: ' || v_cliente.ID);
     DBMS_OUTPUT.PUT_LINE('OBJETIVOS: ' || v_cliente.OBJETIVO);
-    -- Imprime los demÃ¡s campos del cliente si es necesario
 EXCEPTION
     WHEN OTHERS THEN
-        -- Manejo de errores
+
         DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
 END;
 /
@@ -710,8 +712,8 @@ BEGIN
     v_datos_cliente.CORREOE := 'juan.perez@example.com';
     v_datos_cliente.OBJETIVOS := 'Perder peso';
     v_datos_cliente.PREFERENCIAS := 'Vegetariano';
-    v_datos_cliente.DIETA := 1; -- Suponiendo que la dieta con ID 1 existe
-    v_datos_cliente.CENTRO := 1; -- Suponiendo que el centro con ID 1 existe
+    v_datos_cliente.DIETA := 1; 
+    v_datos_cliente.CENTRO := 10;
     
     base.CREA_CLIENTE(
         P_DATOS => v_datos_cliente,
@@ -729,14 +731,14 @@ DECLARE
     v_usuario USUARIO%ROWTYPE;
     v_entrenador ENTRENADOR%ROWTYPE;
 BEGIN
-    -- Datos del entrenador
+
     v_datos_entrenador.NOMBRE := 'Ana';
     v_datos_entrenador.APELLIDOS := 'García';
     v_datos_entrenador.TELEFONO := '987654321';
     v_datos_entrenador.DIRECCION := 'Avenida Siempre Viva 742';
     v_datos_entrenador.CORREOE := 'ana.garcia@example.com';
     v_datos_entrenador.DISPONIBILIDAD := 'Lunes a Viernes, 9-17h';
-    v_datos_entrenador.CENTRO := 2; -- Suponiendo que el centro con ID 2 existe
+    v_datos_entrenador.CENTRO := 10; 
     
     base.CREA_ENTRENADOR(
         P_DATOS => v_datos_entrenador,
@@ -853,7 +855,10 @@ END BASE;
 --MARK: PACKAGE BODY BASE
 --DESDE BODY DEL PAQUETE BASE
 
-
+CREATE PROFILE PERFIL_USER LIMIT
+ FAILED_LOGIN_ATTEMPTS 5
+ PASSWORD_LIFE_TIME 90
+ PASSWORD_GRACE_TIME 3;
 create or replace PACKAGE BODY BASE AS 
     --MARK: Crea cliente
     PROCEDURE CREA_CLIENTE(
@@ -1108,58 +1113,58 @@ create or replace PACKAGE BODY ICALC AS
         P_MES IN NUMBER
     )
     IS
-        v_disponibilidad VARCHAR2(4000);
-        v_regla VARCHAR2(4000);
-        v_dias VARCHAR2(50);
-        v_horas VARCHAR2(50);
-        v_minutos VARCHAR2(50);
-        v_fecha DATE;
-        v_dia VARCHAR2(2);
-        v_hora VARCHAR2(2);
-        v_minuto VARCHAR2(2);
-        v_elemento_fecha DATE;
-        v_fecha_inicio DATE;
-        V_DIA_SEMANA VARCHAR2(3);
-        v_pos NUMBER;
+        DISPONIBILIDAD VARCHAR2(4000);
+        REGLA VARCHAR2(4000);
+        DIAS VARCHAR2(50);
+        HORAS VARCHAR2(50);
+        MINUTOS VARCHAR2(50);
+        FECHA DATE;
+        DIA VARCHAR2(2);
+        HORA VARCHAR2(2);
+        MINUTO VARCHAR2(2);
+        ELEMENTO_FECHA DATE;
+        FECHA_INICIO DATE;
+        DIA_SEMANA VARCHAR2(3);
+        POS NUMBER;
         v_substr VARCHAR2(4000);
 
     BEGIN
         SAVEPOINT CREA_ELEMENTOS_POINT;
-        SELECT disponibilidad INTO v_disponibilidad
+        SELECT disponibilidad INTO DISPONIBILIDAD
         FROM ENTRENADOR
         WHERE id = P_ID;
 
-        DBMS_OUTPUT.PUT_LINE('Disponibilidad del entrenador: ' || v_disponibilidad);
+        DBMS_OUTPUT.PUT_LINE('Disponibilidad del entrenador: ' || DISPONIBILIDAD);
 
-        v_pos := 1;
-        WHILE v_pos > 0 LOOP
-            v_pos := INSTR(v_disponibilidad, '|', 1, 1);
-            IF v_pos > 0 THEN
-                v_regla := SUBSTR(v_disponibilidad, 1, v_pos - 1);
-                v_disponibilidad := SUBSTR(v_disponibilidad, v_pos + 1);
+        POS := 1;
+        WHILE POS > 0 LOOP
+            POS := INSTR(DISPONIBILIDAD, '|', 1, 1);
+            IF POS > 0 THEN
+                REGLA := SUBSTR(DISPONIBILIDAD, 1, POS - 1);
+                DISPONIBILIDAD := SUBSTR(DISPONIBILIDAD, POS + 1);
             ELSE
-                v_regla := v_disponibilidad;
+                REGLA := DISPONIBILIDAD;
             END IF;
 
-            DBMS_OUTPUT.PUT_LINE('Procesando regla: ' || v_regla);
+            DBMS_OUTPUT.PUT_LINE('Procesando regla: ' || REGLA);
 
             -- Parsear la regla
-            v_dias := REGEXP_SUBSTR(v_regla, 'BYDAY=([^;]+)', 1, 1, NULL, 1);
-            v_horas := REGEXP_SUBSTR(v_regla, 'BYHOUR=([^;]+)', 1, 1, NULL, 1);
-            v_minutos := REGEXP_SUBSTR(v_regla, 'BYMINUTE=([^;]+)', 1, 1, NULL, 1);
-            v_fecha_inicio := TO_DATE(P_ANNO || '-' || P_MES || '-01', 'YYYY-MM-DD');
+            DIAS := REGEXP_SUBSTR(REGLA, 'BYDAY=([^;]+)', 1, 1, NULL, 1);
+            HORAS := REGEXP_SUBSTR(REGLA, 'BYHOUR=([^;]+)', 1, 1, NULL, 1);
+            MINUTOS := REGEXP_SUBSTR(REGLA, 'BYMINUTE=([^;]+)', 1, 1, NULL, 1);
+            FECHA_INICIO := TO_DATE(P_ANNO || '-' || P_MES || '-01', 'YYYY-MM-DD');
 
-            DBMS_OUTPUT.PUT_LINE('Días: ' || v_dias);
-            DBMS_OUTPUT.PUT_LINE('Horas: ' || v_horas);
-            DBMS_OUTPUT.PUT_LINE('Minutos: ' || v_minutos);
-            DBMS_OUTPUT.PUT_LINE('Fecha inicio: ' || v_fecha_inicio);
+            DBMS_OUTPUT.PUT_LINE('Días: ' || DIAS);
+            DBMS_OUTPUT.PUT_LINE('Horas: ' || HORAS);
+            DBMS_OUTPUT.PUT_LINE('Minutos: ' || MINUTOS);
+            DBMS_OUTPUT.PUT_LINE('Fecha inicio: ' || FECHA_INICIO);
 
             -- Generar los elementos de calendario
-            FOR dia IN (SELECT REGEXP_SUBSTR(v_dias, '[A-Z][A-Z]', 1, LEVEL) AS dia
+            FOR dia IN (SELECT REGEXP_SUBSTR(DIAS, '[A-Z][A-Z]', 1, LEVEL) AS dia
                         FROM dual
-                        CONNECT BY REGEXP_SUBSTR(v_dias, '[A-Z][A-Z]', 1, LEVEL) IS NOT NULL) LOOP
-
-                V_DIA_SEMANA := CASE dia.dia
+                        CONNECT BY REGEXP_SUBSTR(DIAS, '[A-Z][A-Z]', 1, LEVEL) IS NOT NULL) LOOP
+            
+                DIA_SEMANA := CASE dia.dia
                     WHEN 'MO' THEN 'MON'
                     WHEN 'TU' THEN 'TUE'
                     WHEN 'WE' THEN 'WED'
@@ -1169,31 +1174,31 @@ create or replace PACKAGE BODY ICALC AS
                     WHEN 'SU' THEN 'SUN'
                     ELSE NULL
                 END;
-
-                IF V_DIA_SEMANA IS NOT NULL THEN
+            
+                IF DIA_SEMANA IS NOT NULL THEN
                     -- Iterar por los días del mes y encontrar los días de la semana especificados
-                    FOR d IN 1..LAST_DAY(v_fecha_inicio) - v_fecha_inicio + 1 LOOP
-                        v_fecha := v_fecha_inicio + d - 1;
-                        IF TO_CHAR(v_fecha, 'DY', 'NLS_DATE_LANGUAGE=ENGLISH') = V_DIA_SEMANA THEN
-                            FOR hora IN (SELECT REGEXP_SUBSTR(v_horas, '[^,]+', 1, LEVEL) AS hora
+                    FOR d IN 1..LAST_DAY(FECHA_INICIO) - FECHA_INICIO + 1 LOOP
+                        FECHA := FECHA_INICIO + d - 1;
+                        IF TO_CHAR(FECHA, 'DY', 'NLS_DATE_LANGUAGE=ENGLISH') = DIA_SEMANA THEN
+                            FOR hora IN (SELECT REGEXP_SUBSTR(HORAS, '[^,]+', 1, LEVEL) AS hora
                                          FROM dual
-                                         CONNECT BY REGEXP_SUBSTR(v_horas, '[^,]+', 1, LEVEL) IS NOT NULL) LOOP
-                                FOR minuto IN (SELECT REGEXP_SUBSTR(v_minutos, '[^,]+', 1, LEVEL) AS minuto
+                                         CONNECT BY REGEXP_SUBSTR(HORAS, '[^,]+', 1, LEVEL) IS NOT NULL) LOOP
+                                FOR minuto IN (SELECT REGEXP_SUBSTR(MINUTOS, '[^,]+', 1, LEVEL) AS minuto
                                                FROM dual
-                                               CONNECT BY REGEXP_SUBSTR(v_minutos, '[^,]+', 1, LEVEL) IS NOT NULL) LOOP
+                                               CONNECT BY REGEXP_SUBSTR(MINUTOS, '[^,]+', 1, LEVEL) IS NOT NULL) LOOP
                                     -- Crear el elemento de calendario
                                     BEGIN
-                                        v_elemento_fecha := TO_DATE(P_ANNO || '-' || P_MES || '-' || TO_CHAR(v_fecha, 'DD') || ' ' || LPAD(hora.hora, 2, '0') || ':' || LPAD(minuto.minuto, 2, '0'), 'YYYY-MM-DD HH24:MI');
+                                        ELEMENTO_FECHA := TO_DATE(P_ANNO || '-' || P_MES || '-' || TO_CHAR(FECHA, 'DD') || ' ' || LPAD(hora.hora, 2, '0') || ':' || LPAD(minuto.minuto, 2, '0'), 'YYYY-MM-DD HH24:MI');
 
-                                        DBMS_OUTPUT.PUT_LINE('Fecha elemento: ' || v_elemento_fecha);
+                                        DBMS_OUTPUT.PUT_LINE('Fecha elemento: ' || ELEMENTO_FECHA);
 
                                         INSERT INTO ELEMENTOCALENDARIO(fechayhora, entrenador_id)
-                                        VALUES (v_elemento_fecha, P_ID);
+                                        VALUES (ELEMENTO_FECHA, P_ID);
                                     EXCEPTION
                                         WHEN DUP_VAL_ON_INDEX THEN
-                                            DBMS_OUTPUT.PUT_LINE('Elemento duplicado ignorado: ' || TO_CHAR(v_elemento_fecha, 'YYYY-MM-DD HH24:MI'));
+                                            DBMS_OUTPUT.PUT_LINE('Elemento duplicado ignorado: ' || TO_CHAR(ELEMENTO_FECHA, 'YYYY-MM-DD HH24:MI'));
                                         WHEN OTHERS THEN
-                                            DBMS_OUTPUT.PUT_LINE('Error al crear elemento para fecha: ' || TO_CHAR(v_elemento_fecha, 'YYYY-MM-DD HH24:MI'));
+                                            DBMS_OUTPUT.PUT_LINE('Error al crear elemento para fecha: ' || TO_CHAR(ELEMENTO_FECHA, 'YYYY-MM-DD HH24:MI'));
                                             RAISE EXCEPCION_CREACION;
                                     END;
                                 END LOOP;
@@ -1234,19 +1239,3 @@ BEGIN
   );
 END;
 /
-
-
---MARK: POLITICA CONTRASEÑA
-CREATE PASSWORD POLICY POLITICA_CONTRASENA
-    PASSWORD_MIN_LENGTH = 12
-    PASSWORD_MAX_LENGTH = 24
-    PASSWORD_MIN_UPPER_CASE_CHARS = 2
-    PASSWORD_MIN_LOWER_CASE_CHARS = 2
-    PASSWORD_MIN_NUMERIC_CHARS = 2
-    PASSWORD_MIN_SPECIAL_CHARS = 2
-    PASSWORD_MIN_AGE_DAYS = 1
-    PASSWORD_MAX_AGE_DAYS = 30
-    PASSWORD_MAX_RETRIES = 3
-    PASSWORD_LOCKOUT_TIME_MINS = 30
-    PASSWORD_HISTORY = 5
-    COMMENT = 'Esta es la politica de contrasena';
